@@ -9,10 +9,27 @@ RUN apt-get install net-tools -y
 RUN apt-get install iputils-ping -y
 RUN apt-get install iperf
 RUN apt-get install git -y
+RUN apt-get install -y make gcc libc-dev
 
-wget https://www.openfabrics.org/downloads/qperf/qperf-0.4.9.tar.gz
-tar xvf qperf-0.4.9.tar.gz
-./qperf-0.4.9/configure
-make ./qperf-0.4.9
-make install ./qperf-0.4.9
+WORKDIR /tmp/qperf
+
+ENV QPERF_DOWNLOAD_LINK https://www.openfabrics.org/downloads/qperf/qperf-0.4.9.tar.gz
+ENV QPERF_TAR qperf-0.4.9.tar.gz
+
+# Install wget
+RUN ["/bin/bash", "-c", "apt-get update && apt-get install wget build-essential -y"]
+
+# Download and extract qperf
+RUN ["/bin/bash", "-c", "wget $QPERF_DOWNLOAD_LINK && tar -xvf $QPERF_TAR && rm $QPERF_TAR"]
+
+# Build qperf
+WORKDIR qperf-0.4.9
+RUN ["/bin/bash", "-c", "./configure && make"]
+
+# Copy qperf 
+RUN ["/bin/bash", "-c", "cp src/qperf /usr/local/bin"]
+
+WORKDIR /
+
+CMD ["/bin/bash"]
 
