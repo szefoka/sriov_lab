@@ -24,7 +24,7 @@ RUN ["/bin/bash", "-c", "wget $QPERF_DOWNLOAD_LINK && tar -xvf $QPERF_TAR && rm 
 
 # Build qperf
 WORKDIR qperf-0.4.9
-RUN ["/bin/bash", "-c", "./configure && make"]
+RUN ["/bin/bash", "-c", "./configure CFLAGS=-w && make"]
 
 # Copy qperf 
 RUN ["/bin/bash", "-c", "cp src/qperf /usr/local/bin"]
